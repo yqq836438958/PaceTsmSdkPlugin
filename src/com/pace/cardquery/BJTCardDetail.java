@@ -13,7 +13,8 @@ public class BJTCardDetail extends BaseCardDetail {
     public BJTCardDetail() {
         super();
         reqApduList.put(Constants.TAG_MONEY, Arrays.asList("", ""));
-        reqApduList.put(Constants.TAG_CARDNUM, Arrays.asList("", ""));
+        reqApduList.put(Constants.TAG_CARDNUM,
+                Arrays.asList("00A40008915600001401000100", "00A40000023F00", "00B0840000"));
     }
 
     @Override
