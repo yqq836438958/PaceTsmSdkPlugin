@@ -12,9 +12,10 @@ public class LNTCardDetail extends BaseCardDetail {
 
     public LNTCardDetail() {
         super();
+        // 00A4000E535A542E57414C4C45542E454E5600
         reqApduList.put(Constants.TAG_MONEY, Arrays.asList("", ""));
         reqApduList.put(Constants.TAG_CARDNUM,
-                Arrays.asList("00A400085943542E5553455200", "00A40000023F00",
+                Arrays.asList("00A4000E535A542E57414C4C45542E454E5600", "00A40000023F00",
                         "00B0840000"));
     }
 
