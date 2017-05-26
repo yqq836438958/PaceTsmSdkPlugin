@@ -5,23 +5,31 @@ import android.text.TextUtils;
 
 import com.pace.utils.ByteUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class SZTCardDetail extends BaseCardDetail {
+    private final List<String> mPreSetApduList = Arrays.asList(
+            "00A404000E535A542E57414C4C45542E454E5600",
+            "00A40000021001", "00B0950000");
+    private final List<String> mCardBalanceApduList = Arrays.asList("805C000204");
+    private final List<String> mCardNumApduList = Arrays.asList("");
+    private boolean mHasInit = false;
 
     public SZTCardDetail() {
         super();
-        reqApduList.put(Constants.TAG_MONEY,
-                Arrays.asList("00A40400085943542E5553455200", "00A4000002DDF1", "00A4000002ADF3",
-                        "805C000204"));
-        reqApduList.put(Constants.TAG_CARDNUM,
-                Arrays.asList(""));
+        init();
     }
 
     @Override
-    public List<String> reqApdu(String tag) {
-        return reqApduList.get(tag);
+    public List<String> onReqApdu(String tag) {
+        List<String> targetList = new ArrayList<String>();
+        if (mHasInit) {
+            targetList.addAll(mPreSetApduList);
+        }
+        targetList.addAll(mReqApduList.get(tag));
+        return targetList;
     }
 
     private String parseCardNumInternal(String result) {
@@ -47,14 +55,14 @@ public class SZTCardDetail extends BaseCardDetail {
 
     @Override
     protected void onPrepareHandlers() {
-        addHandler(Constants.TAG_MONEY, new BaseCardDetail.Handler() {
+        addHandler(Constants.TAG_MONEY, mCardBalanceApduList, new BaseCardDetail.Handler() {
 
             @Override
             protected String onCall(List<String> rspData) {
                 return parseMoneyInternal(rspData.get(rspData.size() - 1));
             }
         });
-        addHandler(Constants.TAG_CARDNUM, new BaseCardDetail.Handler() {
+        addHandler(Constants.TAG_CARDNUM, mCardNumApduList, new BaseCardDetail.Handler() {
 
             @Override
             protected String onCall(List<String> rspData) {
@@ -62,4 +70,5 @@ public class SZTCardDetail extends BaseCardDetail {
             }
         });
     }
+
 }

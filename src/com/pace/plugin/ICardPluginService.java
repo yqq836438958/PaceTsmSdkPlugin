@@ -9,4 +9,6 @@ public interface ICardPluginService {
     public String parseDetailRsp(String aid, String tag, List<String> rsp);
 
     public List<String> getSupportAidList();
+
+    public List<String> getTagListByAid(String aid);
 }

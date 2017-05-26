@@ -7,4 +7,6 @@ public interface ICardDetail {
     public List<String> reqApdu(String tag);
 
     public String rspApdu(String tag, List<String> rspData);
+
+    public List<String> getSupportTags();
 }

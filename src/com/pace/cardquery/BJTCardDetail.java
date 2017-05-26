@@ -5,21 +5,30 @@ import android.text.TextUtils;
 
 import com.pace.utils.ByteUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class BJTCardDetail extends BaseCardDetail {
+    private final List<String> mPreSetApduList = Arrays.asList("");
+    private final List<String> mCardBalanceApduList = Arrays.asList("00A40008915600001401000100",
+            "00A40000023F00", "00B0840000");
+    private final List<String> mCardNumApduList = Arrays.asList("");
+    private boolean mHasInit = false;
 
     public BJTCardDetail() {
         super();
-        reqApduList.put(Constants.TAG_MONEY, Arrays.asList("", ""));
-        reqApduList.put(Constants.TAG_CARDNUM,
-                Arrays.asList("00A40008915600001401000100", "00A40000023F00", "00B0840000"));
+        init();
     }
 
     @Override
-    public List<String> reqApdu(String tag) {
-        return reqApduList.get(tag);
+    public List<String> onReqApdu(String tag) {
+        List<String> targetList = new ArrayList<String>();
+        if (mHasInit) {
+            targetList.addAll(mPreSetApduList);
+        }
+        targetList.addAll(mReqApduList.get(tag));
+        return targetList;
     }
 
     private String parseCardNumInternal(String result) {
@@ -45,14 +54,14 @@ public class BJTCardDetail extends BaseCardDetail {
 
     @Override
     protected void onPrepareHandlers() {
-        addHandler(Constants.TAG_MONEY, new BaseCardDetail.Handler() {
+        addHandler(Constants.TAG_MONEY, mCardBalanceApduList, new BaseCardDetail.Handler() {
 
             @Override
             protected String onCall(List<String> rspData) {
                 return parseMoneyInternal(rspData.get(rspData.size() - 1));
             }
         });
-        addHandler(Constants.TAG_CARDNUM, new BaseCardDetail.Handler() {
+        addHandler(Constants.TAG_CARDNUM, mCardNumApduList, new BaseCardDetail.Handler() {
 
             @Override
             protected String onCall(List<String> rspData) {

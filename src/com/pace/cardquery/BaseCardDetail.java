@@ -3,14 +3,16 @@ package com.pace.cardquery;
 
 import android.text.TextUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public abstract class BaseCardDetail implements ICardDetail {
     private HandlerList mHandlerList;
-    protected HashMap<String, List<String>> reqApduList = new HashMap<String, List<String>>();
+    protected HashMap<String, List<String>> mReqApduList = new HashMap<String, List<String>>();
+    protected List<String> mSupportTagList = new ArrayList<String>();
 
-    public BaseCardDetail() {
+    protected void init() {
         onPrepareHandlers();
     }
 
@@ -19,7 +21,20 @@ public abstract class BaseCardDetail implements ICardDetail {
         return mHandlerList.head.parseTag(tag, rspData);
     }
 
-    protected final void addHandler(String tag, Handler process) {
+    @Override
+    public List<String> reqApdu(String tag) {
+        if (!mSupportTagList.contains(tag)) {
+            return null;
+        }
+        return onReqApdu(tag);
+    }
+
+    @Override
+    public List<String> getSupportTags() {
+        return mSupportTagList;
+    }
+
+    protected final void addHandler(String tag, List<String> cmds, Handler process) {
         if (process == null) {
             return;
         }
@@ -29,7 +44,9 @@ public abstract class BaseCardDetail implements ICardDetail {
         } else {
             mHandlerList.add(process);
         }
-
+        mSupportTagList.add(tag);
+        mReqApduList.clear();
+        mReqApduList.put(tag, cmds);
     }
 
     public abstract class Handler {
@@ -82,4 +99,6 @@ public abstract class BaseCardDetail implements ICardDetail {
     }
 
     protected abstract void onPrepareHandlers();
+
+    protected abstract List<String> onReqApdu(String tag);
 }

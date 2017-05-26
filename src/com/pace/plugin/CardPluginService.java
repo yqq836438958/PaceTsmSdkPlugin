@@ -37,4 +37,13 @@ public class CardPluginService implements ICardPluginService {
         return aidConfigList;
     }
 
+    @Override
+    public List<String> getTagListByAid(String aid) {
+        ICardDetail cardDetail = CardDetailFactory.getInstance().getCard(aid);
+        if (cardDetail == null) {
+            return null;
+        }
+        return cardDetail.getSupportTags();
+    }
+
 }
