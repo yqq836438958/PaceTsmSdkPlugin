@@ -1,5 +1,5 @@
 
-package com.pace.cardquery;
+package com.pace.tsm.plugin.cards;
 
 import java.util.HashMap;
 

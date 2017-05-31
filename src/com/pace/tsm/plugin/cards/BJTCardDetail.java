@@ -1,9 +1,10 @@
 
-package com.pace.cardquery;
+package com.pace.tsm.plugin.cards;
 
 import android.text.TextUtils;
 
-import com.pace.utils.ByteUtil;
+import com.pace.tsm.plugin.bean.CardTransactionBean;
+import com.pace.tsm.plugin.utils.ByteUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,5 +69,25 @@ public class BJTCardDetail extends BaseCardDetail {
                 return parseCardNumInternal(rspData.get(rspData.size() - 1));
             }
         });
+    }
+
+    @Override
+    public List<CardTransactionBean> rspTransaction(List<String> rspData) {
+        List<CardTransactionBean> targeList = new ArrayList<CardTransactionBean>();
+        for (String rsp : rspData) {
+            if (!rsp.endsWith("9000") || rsp.length() != 50) {
+                continue;
+            }
+            CardTransactionBean bean = new CardTransactionBean();
+            bean.setTransaction_time(formatDateForTransaction(rsp.substring(16, 22)));
+            int money = Integer.parseInt(rsp.substring(0, 6), 16);
+            int balance = Integer.parseInt(rsp.substring(6, 12), 16);
+            bean.setTransaction_amount(String.format("%d", new Object[] {
+                    Integer.valueOf(balance - money)
+            }));
+            bean.setTransaction_type("1");
+            targeList.add(bean);
+        }
+        return targeList;
     }
 }

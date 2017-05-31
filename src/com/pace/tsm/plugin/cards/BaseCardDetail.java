@@ -1,7 +1,10 @@
 
-package com.pace.cardquery;
+package com.pace.tsm.plugin.cards;
 
 import android.text.TextUtils;
+
+import com.pace.tsm.plugin.utils.DateTimeUtil;
+import com.pace.tsm.plugin.utils.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +14,7 @@ public abstract class BaseCardDetail implements ICardDetail {
     private HandlerList mHandlerList;
     protected HashMap<String, List<String>> mReqApduList = new HashMap<String, List<String>>();
     protected List<String> mSupportTagList = new ArrayList<String>();
+    protected List<String> mTransactionApduCmds = new ArrayList<String>();
 
     protected void init() {
         onPrepareHandlers();
@@ -32,6 +36,11 @@ public abstract class BaseCardDetail implements ICardDetail {
     @Override
     public List<String> getSupportTags() {
         return mSupportTagList;
+    }
+
+    @Override
+    public List<String> reqTransaction() {
+        return mTransactionApduCmds;
     }
 
     protected final void addHandler(String tag, List<String> cmds, Handler process) {
@@ -101,4 +110,30 @@ public abstract class BaseCardDetail implements ICardDetail {
     protected abstract void onPrepareHandlers();
 
     protected abstract List<String> onReqApdu(String tag);
+
+    public static String formatDatetimeForTransaction(String data) {
+        if (ValueUtil.isEmpty(data)) {
+            return null;
+        }
+        String currentYear = DateTimeUtil.currentDateString("yyyy");
+        if (data.length() == 10) {
+            data = new StringBuilder(String.valueOf(currentYear)).append(data).toString();
+        } else if (data.length() <= 12) {
+            data = currentYear.substring(0, 2) + data;
+        }
+        return DateTimeUtil.format(DateTimeUtil.parseDateString(data, "yyyyMMddHHmmss"),
+                "yyyy-MM-dd HH:mm:ss");
+    }
+
+    public static String formatDateForTransaction(String data) {
+        if (ValueUtil.isEmpty(data)) {
+            return null;
+        }
+        String currentYear = DateTimeUtil.currentDateString("yyyy");
+        if (data.length() <= 12) {
+            data = currentYear.substring(0, 2) + data;
+        }
+        return DateTimeUtil.format(DateTimeUtil.parseDateString(data, "yyyyMMdd"), "yyyy-MM-dd");
+    }
+
 }

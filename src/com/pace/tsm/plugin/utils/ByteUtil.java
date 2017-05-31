@@ -1,5 +1,5 @@
 
-package com.pace.utils;
+package com.pace.tsm.plugin.utils;
 
 import android.text.TextUtils;
 

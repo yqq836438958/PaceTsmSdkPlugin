@@ -1,9 +1,10 @@
 
-package com.pace.plugin;
+package com.pace.tsm.plugin;
 
-import com.pace.cardquery.CardDetailFactory;
-import com.pace.cardquery.Constants;
-import com.pace.cardquery.ICardDetail;
+import com.pace.tsm.plugin.bean.CardTransactionBean;
+import com.pace.tsm.plugin.cards.CardDetailFactory;
+import com.pace.tsm.plugin.cards.Constants;
+import com.pace.tsm.plugin.cards.ICardDetail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,24 @@ public class CardPluginService implements ICardPluginService {
             return null;
         }
         return cardDetail.getSupportTags();
+    }
+
+    @Override
+    public List<String> fetchTransactionReq(String aid) {
+        ICardDetail cardDetail = CardDetailFactory.getInstance().getCard(aid);
+        if (cardDetail == null) {
+            return null;
+        }
+        return cardDetail.reqTransaction();
+    }
+
+    @Override
+    public List<CardTransactionBean> parseTransactionRsp(String aid, List<String> rsp) {
+        ICardDetail cardDetail = CardDetailFactory.getInstance().getCard(aid);
+        if (cardDetail == null) {
+            return null;
+        }
+        return cardDetail.rspTransaction(rsp);
     }
 
 }

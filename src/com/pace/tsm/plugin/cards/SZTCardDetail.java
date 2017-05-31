@@ -1,26 +1,33 @@
 
-package com.pace.cardquery;
+package com.pace.tsm.plugin.cards;
 
 import android.text.TextUtils;
 
-import com.pace.utils.ByteUtil;
+import com.pace.tsm.plugin.bean.CardTransactionBean;
+import com.pace.tsm.plugin.utils.ByteUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LNTCardDetail extends BaseCardDetail {
-    private final List<String> mPreSetApduList = Arrays.asList("00A40400085943542E5553455200",
-            "00A4000002DDF1", "00A4000002ADF3");
+public class SZTCardDetail extends BaseCardDetail {
+    private final List<String> mPreSetApduList = Arrays.asList(
+            "00A404000E535A542E57414C4C45542E454E5600",
+            "00A40000021001", "00B0950000");
     private final List<String> mCardBalanceApduList = Arrays.asList("805C000204");
     private final List<String> mCardNumApduList = Arrays.asList("");
+    private boolean mHasInit = false;
 
-    public LNTCardDetail() {
+    public SZTCardDetail() {
         super();
         init();
+        mTransactionApduCmds.clear();
+        mTransactionApduCmds.add("00A404000E535A542E57414C4C45542E454E5600");
+        mTransactionApduCmds.add("00A40000021001");
+        for (int i = 0; i < 10; i++) {
+            mTransactionApduCmds.add("00B2#C400".replace("#", ByteUtil.toHex(i)));
+        }
     }
-
-    private boolean mHasInit = false;
 
     @Override
     public List<String> onReqApdu(String tag) {
@@ -69,6 +76,31 @@ public class LNTCardDetail extends BaseCardDetail {
                 return parseCardNumInternal(rspData.get(rspData.size() - 1));
             }
         });
+    }
+
+    @Override
+    public List<CardTransactionBean> rspTransaction(List<String> rspData) {
+        List<CardTransactionBean> targeList = new ArrayList<CardTransactionBean>();
+        for (String rsp : rspData) {
+            if (!rsp.endsWith("9000") || rsp.length() != 50) {
+                continue;
+            }
+            CardTransactionBean bean = new CardTransactionBean();
+            bean.setTransaction_time(
+                    formatDatetimeForTransaction(rsp.substring(32, 46)));
+            bean.setTransaction_amount(String.format("%d", new Object[] {
+                    Integer.valueOf(Integer.parseInt(rsp.substring(10, 18), 16))
+            }));
+            String type = rsp.substring(18, 20);
+            if (type.matches("10|02|01")) {
+                type = "1";
+            } else if (type.matches("11|09|06|05")) {
+                type = "2";
+            }
+            bean.setTransaction_type(type);
+            targeList.add(bean);
+        }
+        return targeList;
     }
 
 }

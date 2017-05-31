@@ -1,5 +1,5 @@
 
-package com.pace.cardquery;
+package com.pace.tsm.plugin.cards;
 
 public class Constants {
     public static final String AID_BJT = "9156000014010001";
