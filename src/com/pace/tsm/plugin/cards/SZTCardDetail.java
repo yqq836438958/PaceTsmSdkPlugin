@@ -4,7 +4,7 @@ package com.pace.tsm.plugin.cards;
 import android.text.TextUtils;
 
 import com.pace.tsm.plugin.bean.CardTransactionBean;
-import com.pace.tsm.plugin.utils.ByteUtil;
+import com.pace.tsm.utils.ByteUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;

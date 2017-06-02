@@ -3,8 +3,8 @@ package com.pace.tsm.plugin.cards;
 
 import android.text.TextUtils;
 
-import com.pace.tsm.plugin.utils.DateTimeUtil;
-import com.pace.tsm.plugin.utils.ValueUtil;
+import com.pace.tsm.utils.DateTimeUtil;
+import com.pace.tsm.utils.ValueUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -4,7 +4,7 @@ package com.pace.tsm.plugin.cards;
 import android.text.TextUtils;
 
 import com.pace.tsm.plugin.bean.CardTransactionBean;
-import com.pace.tsm.plugin.utils.ByteUtil;
+import com.pace.tsm.utils.ByteUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,7 +87,9 @@ public class LNTCardDetail extends BaseCardDetail {
             CardTransactionBean bean = new CardTransactionBean();
             bean.setTransaction_time(formatDatetimeForTransaction(rsp.substring(36, 46)));
             if (Integer.parseInt(rsp.substring(10, 18), 16) != 0) {
-                bean.setTransaction_amount(String.format("%d", new Object[]{Integer.valueOf(Integer.parseInt(rsp.substring(10, 18), 16))}));
+                bean.setTransaction_amount(String.format("%d", new Object[] {
+                        Integer.valueOf(Integer.parseInt(rsp.substring(10, 18), 16))
+                }));
                 String transtype = rsp.substring(18, 20);
                 if (transtype.equals("01") || transtype.equals("02")) {
                     // topup
@@ -96,9 +98,9 @@ public class LNTCardDetail extends BaseCardDetail {
                     // consume
                     bean.setTransaction_type("2");
                 }
-            targeList.add(bean);
+                targeList.add(bean);
+            }
         }
         return targeList;
     }
-
 }
